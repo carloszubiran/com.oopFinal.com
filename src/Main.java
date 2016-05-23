@@ -1,3 +1,5 @@
+import DAO.MySQL;
+import console.Console;
 import org.apache.log4j.Logger;
 
 public class Main {
@@ -9,6 +11,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("Hello World!");
+        Console aConsole = new Console();
+        aConsole.greetUser();
+        aConsole.DisplayOptionsForUsers();
+
+
     }
 }
+
+
+

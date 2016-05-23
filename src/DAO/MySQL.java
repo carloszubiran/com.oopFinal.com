@@ -1,7 +1,8 @@
-package MySql;
+package DAO;
 
 import org.apache.log4j.Logger;
 
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -42,7 +43,6 @@ public abstract class MySQL {
 
     //endregion GETTERS / SETTERS
 
-
     //region CUSTOM METHODS
 
     protected static void Connect() {
@@ -70,13 +70,16 @@ public abstract class MySQL {
         }
     }
 
-    protected static void CreateTables() {
-
-
-
+    public static void TruncateTables() {
+        Connect();
+        try {
+            connection.createStatement().execute("call usp_DeleteStuffFromTable;");
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     //endregion CUSTOM METHODS
-
 
 }
