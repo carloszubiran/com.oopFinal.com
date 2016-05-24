@@ -32,7 +32,7 @@ public class FileAndDirectoryReader {
 
     // Constructor that takes a file as an argument
     public FileAndDirectoryReader(File aFile) {
-        getFileObjectAndDisplayFileAndFolders(aFile);
+        CreateTopLevelDirectory(aFile);
     }
 
 
@@ -54,18 +54,34 @@ public class FileAndDirectoryReader {
         else return "";
     }
 
+
+    // This is used with the getFileObjectAndDisplayFileAndFolders method,
+    // this is needed to make sure if there is a folder to place the current files
+    // if not there will be an error in the database and some files will
+    // fail to update with no reference of where to do.
+
+    private void CreateTopLevelDirectory(File FileIO){
+        Directory currentDirectory = new Directory();
+        currentDirectory.setDirectoryName(FileIO.getName());
+        currentDirectory.setPath(FileIO.getParent());
+
+        int dirId = new DirectoryDAOImpl().insertDirectory(currentDirectory);
+        getFileObjectAndDisplayFileAndFolders(FileIO, dirId);
+
+    }
+
     // this is the method that will recursively traverse the filesystem
     // it also puts these objects into the database, they can be called
     // on later after they have been inserted.
     // The sizes of the directories and the amount of files of the
     // directories are updated on the database end using store procedures
 
-    public void getFileObjectAndDisplayFileAndFolders(File dir) {
+    public void getFileObjectAndDisplayFileAndFolders(File dir, int topLevelDirectory) {
 
         try {
 
             // int for current directory
-            int currentDir = 0;
+            int currentDir = topLevelDirectory;
             // make a new directory object
             Directory aDirObject = new Directory();
             // make a new directory data access (interface) object with it's implementation (class that implements it)
@@ -93,7 +109,7 @@ public class FileAndDirectoryReader {
                     logger.info("directory: " + file.getCanonicalPath());
 
                     // do a recursive call
-                    getFileObjectAndDisplayFileAndFolders(file);
+                    getFileObjectAndDisplayFileAndFolders(file, currentDir);
                 } else {
                     // this sets the attributes of the file objects
                     aFileObject.setFileName(file.getName());
